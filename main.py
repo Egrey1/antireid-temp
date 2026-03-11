@@ -118,9 +118,10 @@ class AnswerModal(Modal):
 
 
 
-@bot.add_listener()
 async def on_ready():
     deps.channel = (await (await bot.fetch_guild(1285154407083675699)).fetch_channel(1481243103255072770))
+
+bot.add_listener(on_ready)
 
 load_dotenv()
 TOKEN = getenv('TOKEN')
