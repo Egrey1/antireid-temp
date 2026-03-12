@@ -88,7 +88,6 @@ async def test(ctx: Context):
     embed.set_footer(text=ctx.author.global_name, icon_url=ctx.author.avatar.url)
 
     await ctx.author.send(embed=embed, view=view)
-    counter+= 1
 
 @bot.command(name='test_once')
 async def test_once(ctx: Context):
@@ -119,7 +118,6 @@ async def test_once(ctx: Context):
             view.add_item(send_msg)
 
             await auditlog.target.send(embed=embed, view=view)
-            counter+= 1
         except:
             continue
         return
@@ -171,7 +169,7 @@ class AnswerModal(Modal):
             view.add_item(button)
 
             await self.user.send(embed=embed, view=view) 
-        await interaction.response.send_message('Сообщение отправлено! Прошу не переписывайтесь слишком много')
+        await interaction.response.send_message('Сообщение отправлено! Прошу не переписывайтесь слишком много', delete_after=35)
 
 
 
