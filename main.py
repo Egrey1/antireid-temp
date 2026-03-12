@@ -90,6 +90,40 @@ async def test(ctx: Context):
     await ctx.author.send(embed=embed, view=view)
     counter+= 1
 
+@bot.command(name='test_once')
+async def test_once(ctx: Context):
+    embed = Embed(
+            title='Эдемия', 
+            description='Здравствуйте! Наш сервер подвергся крашу и прямо сейчас идет восстановление. Оно уже почти закончено и стоит на финальном этапе. Если вы хотите вернуться на сервер нажмите на первую кнопку. Если вы хотите связаться с администрацией нажмите на вторую кнопку'
+            )
+    embed.set_footer(text=ctx.author.global_name, icon_url=ctx.author.avatar.url)
+    async for auditlog in ctx.guild.audit_logs(
+        action=AuditLogAction.ban, 
+        before=dt.datetime(2026, 3, 13), 
+        after=dt.datetime(2026, 3, 11, 23, 59, 59)
+        ):
+        try:
+            await ctx.guild.unban(auditlog.target)
+        except:
+            pass
+
+        try:
+            view = View(timeout=None)
+            button = Button(label='Да, я хочу получить ссылку') 
+            send_msg = Button(label='Написать администрации')
+
+            button.callback = give_link
+            send_msg.callback = partial(adm, user=auditlog.target)
+
+            view.add_item(button)
+            view.add_item(send_msg)
+
+            await auditlog.target.send(embed=embed, view=view)
+            counter+= 1
+        except:
+            continue
+        return
+
 class AnswerModal(Modal):
     def __init__(self, user: User, user_send: bool, guild_id: int = None):
         super().__init__(title='Написание сообщения', timeout=None)
