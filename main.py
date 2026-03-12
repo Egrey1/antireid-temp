@@ -69,6 +69,26 @@ async def run_mailing(ctx: Context):
 
     await ctx.reply('Подтвердите рассылку', view=view) 
 
+@bot.command(name='test')
+async def test(ctx: Context):
+    view = View(timeout=None)
+    button = Button(label='Да, я хочу получить ссылку') 
+    send_msg = Button(label='Написать администрации')
+
+    button.callback = give_link
+    send_msg.callback = partial(adm, user=ctx.author)
+
+    view.add_item(button)
+    view.add_item(send_msg)
+
+    embed = Embed(
+            title='Эдемия', 
+            description='Здравствуйте! Наш сервер подвергся крашу и прямо сейчас идет восстановление. Оно уже почти закончено и стоит на финальном этапе. Если вы хотите вернуться на сервер нажмите на первую кнопку. Если вы хотите связаться с администрацией нажмите на вторую кнопку'
+            )
+    embed.set_footer(text=ctx.author.global_name, icon_url=ctx.author.avatar.url)
+
+    await ctx.author.send(embed=embed, view=view)
+    counter+= 1
 
 class AnswerModal(Modal):
     def __init__(self, user: User, user_send: bool, guild_id: int = None):
@@ -124,6 +144,8 @@ class AnswerModal(Modal):
 
 async def on_ready():
     deps.channel = (await (await bot.fetch_guild(1285154407083675699)).fetch_channel(1481243103255072770))
+    import logging
+    logging.info('Бот запущен!')
 
 bot.add_listener(on_ready)
 
