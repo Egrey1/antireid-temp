@@ -15,7 +15,7 @@ async def give_link(interaction2: Interaction):
 
 async def adm(interaction2: Interaction, user: User | None):
     modal = AnswerModal(user, False, guild_id=interaction2.guild_id)
-    await interaction2.response.send_modal(modal=modal)
+    await interaction2.response.send_modal(modal)
 
 @bot.command(name='запустить_рассылку') 
 async def run_mailing(ctx: Context):
@@ -150,7 +150,7 @@ class AnswerModal(Modal):
                     await interaction2.response.send_message('Вы не имеете права использовать эту кнопку!', ephemeral=True)
                     return
                 modal = AnswerModal(self.user, True, guild_id=self.guild_id)
-                await interaction2.response.send_modal(modal=modal)
+                await interaction2.response.send_modal(modal)
 
             view = View(timeout=None)
             button = Button(label='Ответить')
@@ -162,7 +162,7 @@ class AnswerModal(Modal):
         else:
             async def callback(interaction2: Interaction):
                 modal = AnswerModal(self.user, False, guild_id=self.guild_id)
-                await interaction2.response.send_modal(modal=modal)
+                await interaction2.response.send_modal(modal)
 
             view = View(timeout=None)
             button = Button(label='Ответить')
