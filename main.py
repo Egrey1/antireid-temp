@@ -118,6 +118,7 @@ async def test_once(ctx: Context):
             view.add_item(send_msg)
 
             await auditlog.target.send(embed=embed, view=view)
+            await ctx.send(f'Счастливчик, получивший это сообщение имеет никнейм {auditlog.target.global_name} или {auditlog.target.mention}')
         except:
             continue
         return
@@ -139,14 +140,6 @@ class AnswerModal(Modal):
 
         if not self.user_send:
             async def callback(interaction2: Interaction):
-                guild = bot.get_guild(self.guild_id)
-                if not guild:
-                    await interaction2.response.send_message('Не удалось найти сервер!', ephemeral=True)
-                    return
-                member = guild.get_member(interaction2.user.id)
-                if not member or not member.guild_permissions.administrator:
-                    await interaction2.response.send_message('Вы не имеете права использовать эту кнопку!', ephemeral=True)
-                    return
                 modal = AnswerModal(self.user, True, guild_id=self.guild_id)
                 await interaction2.response.send_modal(modal)
 
@@ -169,15 +162,15 @@ class AnswerModal(Modal):
             view.add_item(button)
 
             await self.user.send(embed=embed, view=view) 
-        await interaction.response.send_message('Сообщение отправлено! Прошу не переписывайтесь слишком много', delete_after=35)
+        await interaction.response.send_message('Сообщение отправлено! Прошу не переписывайтесь слишком много', delete_after=5)
 
 
 
 
 async def on_ready():
     deps.channel = (await (await bot.fetch_guild(1285154407083675699)).fetch_channel(1481243103255072770))
-    import logging
-    logging.info('Бот запущен!')
+    
+    print('Бот запущен!')
 
 bot.add_listener(on_ready)
 
