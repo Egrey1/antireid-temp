@@ -19,7 +19,7 @@ async def adm(interaction2: Interaction, user: User | None):
 
 @bot.command(name='запустить_рассылку') 
 async def run_mailing(ctx: Context):
-    if not ctx.author.resolved_permissions.administrator:
+    if not ctx.author.guild_permissions.administrator:
         return 
     
     async def callback(interaction: Interaction):
@@ -28,6 +28,12 @@ async def run_mailing(ctx: Context):
             return
         counter = 0
         await interaction.response.send_message('Начинаю рассылку')
+
+        embed = Embed(
+            title='Эдемия', 
+            description='Здравствуйте! Наш сервер подвергся крашу и прямо сейчас идет восстановление. Оно уже почти закончено и стоит на финальном этапе. Если вы хотите вернуться на сервер нажмите на первую кнопку. Если вы хотите связаться с администрацией нажмите на вторую кнопку'
+            )
+        embed.set_footer(text=ctx.author.global_name, icon_url=ctx.author.avatar.url)
         async for auditlog in interaction.guild.audit_logs(
             action=AuditLogAction.ban, 
             before=dt.datetime(2026, 3, 12), 
@@ -39,7 +45,7 @@ async def run_mailing(ctx: Context):
                 pass
 
             try:
-                view = View()
+                view = View(timeout=None)
                 button = Button(label='Да, я хочу получить ссылку') 
                 send_msg = Button(label='Написать администрации')
 
@@ -49,16 +55,13 @@ async def run_mailing(ctx: Context):
                 view.add_item(button)
                 view.add_item(send_msg)
 
-                embed = Embed(title='Эдемия', description='Здравствуйте! Наш сервер подвергся крашу и прямо сейчас идет восстановление. Оно уже почти закончено и стоит на финальном этапе. Если вы хотите вернуться на сервер нажмите на первую кнопку. Если вы хотите связаться с администрацией нажмите на вторую кнопку')
-                embed.set_footer(text=ctx.author.global_name, icon_url=ctx.author.avatar.url)
-
                 await auditlog.target.send(embed=embed, view=view)
                 counter+= 1
             except:
                 continue
         await interaction.followup.send(f'Рассылка завершена. Получили сообщение {counter} человек')
     
-    view = View()
+    view = View(timeout=None)
     button = Button(label='Подтверждаю', style=ButtonStyle.green) 
 
     button.callback = callback
@@ -69,6 +72,7 @@ async def run_mailing(ctx: Context):
 
 class AnswerModal(Modal):
     def __init__(self, user: User, user_send: bool, guild_id: int = None):
+        super().__init__(title='Написание сообщения', timeout=None)
         self.user = user
         self.user_send = user_send
         self.guild_id = guild_id
@@ -94,7 +98,7 @@ class AnswerModal(Modal):
                 modal = AnswerModal(self.user, True, guild_id=self.guild_id)
                 await interaction2.response.send_modal(modal=modal)
 
-            view = View()
+            view = View(timeout=None)
             button = Button(label='Ответить')
 
             button.callback = callback
@@ -106,7 +110,7 @@ class AnswerModal(Modal):
                 modal = AnswerModal(self.user, False, guild_id=self.guild_id)
                 await interaction2.response.send_modal(modal=modal)
 
-            view = View()
+            view = View(timeout=None)
             button = Button(label='Ответить')
 
             button.callback = callback
